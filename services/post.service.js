@@ -2,28 +2,25 @@ import Post from '../models/post.js';
 
 
 const postService = {
-    findAll:async(req, res, next)=>{
-        const posts = await Post.find()
-        .populate('comments')
-        .exec();
+    findAll:async(req, res, next) => {
 
-        res.status(200).send(posts);
+         const posts = await Post.find();
+         res.status(200).send(posts);  
     },
 
     findById:async(req,res,next)=>{
       try{
         const {id} = req.params;
-        const post = await Post.findOne({_id:id})
-        .populate('comments')
-        .exec();
-
+        const post = await Post.findOne({id:id})
+                               .populate('comments')
+                               .exec();
+        
         res.status(200).send(post);
-
+       
       }catch(err){
         console.error(err);
         next(err);
-      }
-       
+      }    
     },
 
     create:async(req, res,next) => {
@@ -37,7 +34,6 @@ const postService = {
          console.error(err);
          next(err);
       }
-    
     },
 
     update:async(req, res, next) => {
@@ -45,10 +41,9 @@ const postService = {
 
         const {id} = req.params;
 
-
         const post = req.body;
-      
-        const updatePost = await Post.findByIdAndUpdate({_id:id}, post, {
+        const updatePost = await Post.findOneAndUpdate({id:id}, post, {
+          upsert:true,
           new:true
         });
         
@@ -60,10 +55,17 @@ const postService = {
        }
       },
 
-      Delete: async(req,res,next)=>{
+      Delete: async(req,res,next) => {
+       try{
+
         const {id} = req.params; 
-        const deleted = await Post.findByIdAndDelete({_id:id});
+        const deleted = await Post.deleteOne({id:id});
         res.status(204).json(deleted);
+
+       }catch(err){
+        console.error(err);
+        next(err);
+       }
       }
 }
 
