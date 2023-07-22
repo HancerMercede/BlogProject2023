@@ -1,7 +1,7 @@
 import express from 'express';
-import {Auth, isAuthenticated} from './auth/auth.js';
-import _postService from './services/post.service.js';
-import _commentService from './services/comment.service.js';
+import {Auth, isAuthenticated} from './src/auth/auth.js';
+import _postService from './src/services/post.service.js';
+import _commentService from './src/services/comment.service.js';
 
 
 const app = express();
@@ -34,7 +34,8 @@ app.get('/posts/:id/comments', _commentService.findAllCommentsByPost);
 app.get('/posts/:id/comments/:idComment', _commentService.findCommentForPostById);
 app.post('/posts/:id/comments', isAuthenticated, _commentService.create);
 app.put('/posts/:id/comments/:idComment', isAuthenticated, _commentService.updateCommentForPostById);
+app.delete('/posts/:id/comments/:idComment', isAuthenticated,_commentService.delete);
 
 
-const server = app.listen(port, ()=>console.log('server running in port:',port));
+const server = app.listen(port, ()=> console.log('server running in port:',port));
 server.listen;
