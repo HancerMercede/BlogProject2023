@@ -1,6 +1,9 @@
 import express from 'express';
 import {Auth, isAuthenticated} from './auth/auth.js';
 import _postService from './services/post.service.js';
+import _commentService from './services/comment.service.js';
+
+
 const app = express();
 
 app.use(express.json());
@@ -19,9 +22,19 @@ app.get('/auth', isAuthenticated, (req, res)=>{
     res.send(req.user);
 });
 
-app.get('/posts', _postService.findAll );
+//Comments EndPoints
+app.get('/posts', _postService.findAll);
+app.get('/posts/:id', _postService.findById);
 app.post('/posts', isAuthenticated, _postService.create);
+app.put('/posts/:id', isAuthenticated, _postService.update)
+app.delete('/posts/:id', isAuthenticated, _postService.Delete)
+
+//Comments EndPoints
+app.get('/posts/:id/comments', _commentService.findAllCommentsByPost);
+app.get('/posts/:id/comments/:idComment', _commentService.findCommentForPostById);
+app.post('/posts/:id/comments', isAuthenticated, _commentService.create);
+app.put('/posts/:id/comments/:idComment', isAuthenticated, _commentService.updateCommentForPostById);
+
 
 const server = app.listen(port, ()=>console.log('server running in port:',port));
-console.log(process.env.SECRET_KEY);
-server.listen
+server.listen;
