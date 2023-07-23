@@ -2,7 +2,7 @@ import express from 'express';
 import {Auth, isAuthenticated} from './src/auth/auth.js';
 import _postService from './src/services/post.service.js';
 import _commentService from './src/services/comment.service.js';
-
+import _postrelService from './src/services/postrel.service.js';
 
 const app = express();
 
@@ -24,6 +24,7 @@ app.get('/auth', isAuthenticated, (req, res)=>{
 
 //Comments EndPoints
 app.get('/posts', _postService.findAll);
+app.get('/postsToMariaDb', _postrelService.findAllFromMariaDb);
 app.get('/posts/:id', _postService.findById);
 app.post('/posts', isAuthenticated, _postService.create);
 app.put('/posts/:id', isAuthenticated, _postService.update)
