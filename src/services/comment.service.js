@@ -1,4 +1,4 @@
-import Comment from '../models/comment.js';
+import Comment from "../database/models/comment.js";
 
 
 const commentService = {
@@ -6,7 +6,7 @@ const commentService = {
     findAllCommentsByPost:async(req,res,next)=>{
        
         const {id} = req.params;
-        const comments = await Comment.find({idPost:id});
+        const comments = await Comment.findAll({where: {idPost:id}});
 
         if(comments === null){return res.send(`No comments yet for this post: ${id}`)}
         res.status(200).send(comments);
@@ -14,11 +14,10 @@ const commentService = {
 
     findCommentForPostById:async(req,res,next)=>{
         const {id, idComment} = req.params;
-        const comment = await Comment.findOne({idPost:id, id:idComment});
+        const comment = await Comment.findAll({where:{idPost:id, id:idComment}});
 
         if(comment === null) { return res.send(`No comment with this id : ${idComment}`); }
 
-        console.log(comment);
         res.status(200).send(comment);
     },
 
