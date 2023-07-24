@@ -4,19 +4,20 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { expressjwt } from 'express-jwt';
 import dotenv from 'dotenv';
-import User from '../models/user.js';
+//import User from '../models/user.js';
+import User from '../database/models/user.js';
 
 dotenv.config();
 
 app.use(express.json());
 
-const signToken =_id => jwt.sign({_id}, process.env.SECRET_KEY, {expiresIn:'1h'});
+const signToken = id => jwt.sign({id}, process.env.SECRET_KEY, {expiresIn:'1h'});
 const validateJWT = expressjwt({secret:process.env.SECRET_KEY, algorithms:['HS256']});
 
 // Middleware to find and assign the user to the request.
 const findAndAssignUser = async (req,res,next)=> {
     try{
-       const user = await User.findById(req.auth._id);
+       const user = await User.findByPk(req.auth.id);
 
        if(!user) {return res.status(404).end();}
 
@@ -44,8 +45,8 @@ const Auth = {
 
             const salt = await bcrypt.genSalt();
             const hashed = await bcrypt.hash(body.password, salt);
-            const user = await User.create({ email:body.email, password:hashed,salt, name:body.name, roles:body.roles });
-            const signed = signToken(user._id);
+            const user = await User.create({ email:body.email, password:hashed,salt, name:body.name, role:body.role });
+            const signed = signToken(user.id);
             res.status(201).send(signed);
 
         }catch(err){
@@ -67,7 +68,7 @@ const Auth = {
                 const isMatch = await bcrypt.compare(body.password,user.password);
 
                 if(isMatch){
-                    const signed = signToken(user._id);
+                    const signed = signToken(user.id);
                     res.status(200).send(signed);
                 }
                 else{
