@@ -32,11 +32,8 @@ const commentService = {
      try{
 
         const {id, idComment} = req.params;
-        const post = req.body;
-        const commentUpdated = await Comment.findOneAndUpdate({idPost:id, id:idComment}, post, {
-            upsert:true,
-            new:true
-        });
+        const comment = req.body;
+        const commentUpdated = await Comment.update(comment,{where:{idPost:id, id:idComment}});
         res.status(200).json(commentUpdated);
 
      }catch(err){
@@ -49,9 +46,9 @@ const commentService = {
        try{
 
         const {id, idComment} = req.params;
-        const commetDeleted = await Comment.deleteOne({idPost:id, id:idComment});
+        const commetDeleted = await Comment.destroy({where:{idPost:id, id:idComment}});
  
-        res.status(204).send();
+        res.status(204).send(commetDeleted);
 
        }catch(err){
         console.error(err);
