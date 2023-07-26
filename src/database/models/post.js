@@ -1,13 +1,17 @@
-import { DataTypes } from "sequelize";
+import { DataTypes, UUIDV4 } from "sequelize";
 import sequelize from "../../Persistence/database.js";
 
 
 const Post = sequelize.define('Post', {
   // Model attributes are defined here
   id: {
-    type: DataTypes.STRING,
+    type: DataTypes.STRING, 
+    defaultValue: UUIDV4,
     allowNull: false,
-    primaryKey:true
+    primaryKey:true,
+    validate:{
+        isUUID: 4
+    }
   },
   title: {
     type: DataTypes.STRING,
@@ -23,7 +27,11 @@ const Post = sequelize.define('Post', {
   },
   postdate: {
     type: DataTypes.DATE,
-    allowNull:false
+    defaultValue: DataTypes.NOW,
+    allowNull:false,
+    validate:{
+        isDate: true
+    }
   },
   createdAt: {
     type: DataTypes.DATE,
@@ -35,6 +43,7 @@ const Post = sequelize.define('Post', {
   },
   modifiedBy: {
     type: DataTypes.DATE,
+    defaultValue: DataTypes.NOW,
     allowNull:false
   }
 }, {
