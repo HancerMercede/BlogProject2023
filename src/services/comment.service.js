@@ -6,7 +6,7 @@ const commentService = {
     const comments = await Comment.findAll({ where: { idPost: id } });
 
     if (comments.length === 0 || comments === null) {
-      return res.send(`No comments yet for this post: ${id}`);
+      return res.json({ message: `No comments yet for this post: ${id}` });
     }
     res.status(200).send(comments);
   },
@@ -18,7 +18,7 @@ const commentService = {
     });
     console.log(comment);
     if (comment.length === 0 || comment === null) {
-      return res.send(`No comment with this id : ${idComment}`);
+      return res.json({ message: `No comment with this id : ${idComment}` });
     }
 
     res.status(200).json(comment);
