@@ -11,10 +11,12 @@ app.use(cors());
 
 const port = process.env.PORT || 3001;
 
+// root endpoints
 app.get("/", (req, res, next) => {
-  res.send("Hello Node.js");
+  res.send("Hello, this is the API for the it-master-blog application.");
 });
 
+//Auth EndPoints
 app.post("/auth/register", Auth.register);
 app.post("/auth/login", Auth.login);
 
@@ -47,6 +49,7 @@ app.delete(
   _commentService.delete
 );
 
+//Start the server
 const server = app.listen(port, () =>
   console.log("server running in port:", port)
 );
