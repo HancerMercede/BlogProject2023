@@ -26,6 +26,7 @@ app.get("/auth", isAuthenticated, (req, res) => {
 
 //Comments EndPoints
 app.get("/posts", _postService.findAll);
+
 app.get("/posts/:id", _postService.findById);
 app.post("/posts", isAuthenticated, _postService.create);
 app.put("/posts/:id", isAuthenticated, _postService.update);

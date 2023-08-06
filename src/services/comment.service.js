@@ -1,5 +1,7 @@
 import Comment from "../database/models/comment.js";
 
+
+
 const commentService = {
   findAllCommentsByPost: async (req, res, next) => {
     const { id } = req.params;
@@ -16,7 +18,7 @@ const commentService = {
     const comment = await Comment.findAll({
       where: { idPost: id, id: idComment },
     });
-    console.log(comment);
+
     if (comment.length === 0 || comment === null) {
       return res.json({ message: `No comment with this id : ${idComment}` });
     }
