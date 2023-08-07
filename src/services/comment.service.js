@@ -27,20 +27,15 @@ const commentService = {
 
   create: async (req, res, next) => {
     try {
-      const result = await sequelize.transaction(
-        async (t) => {
-          const { id } = req.params;
-          const model = req.body;
-          const createComment = await Comment.create({
-            username: model.username,
-            date: model.date,
-            content: model.content,
-            idPost: id,
-          });
-          res.status(200).send(createComment);
-        },
-        { transaction: t }
-      );
+      return await sequelize.transaction(async (t) => {
+        const { id } = await req.params;
+        const model = req.body;
+        const createComment = await Comment.create(
+          { ...model },
+          { transaction: t }
+        );
+        res.status(200).send(createComment);
+      });
     } catch (error) {
       console.error(error);
       next(error);
@@ -49,13 +44,17 @@ const commentService = {
 
   updateCommentForPostById: async (req, res, next) => {
     try {
-      const { id, idComment } = req.params;
-      const comment = req.body;
-      const commentUpdated = await Comment.update(comment, {
-        where: { idPost: id, id: idComment },
-      });
+      return await sequelize.transaction(async (t) => {
+        const { id, idComment } = req.params;
+        const comment = req.body;
+        const commentUpdated = await Comment.update(
+          comment,
+          { where: { idPost: id, id: idComment } },
+          { transaction: t }
+        );
 
-      res.status(200).json(commentUpdated);
+        res.status(200).json(commentUpdated);
+      });
     } catch (err) {
       console.error(err);
       next(err);
@@ -64,12 +63,15 @@ const commentService = {
 
   delete: async (req, res, next) => {
     try {
-      const { id, idComment } = req.params;
-      const commetDeleted = await Comment.destroy({
-        where: { idPost: id, id: idComment },
-      });
+      return await sequelize.transaction(async (t) => {
+        const { id, idComment } = req.params;
+        const commetDeleted = await Comment.destroy(
+          { where: { idPost: id, id: idComment } },
+          { transaction: t }
+        );
 
-      res.status(204).send(commetDeleted);
+        res.status(204).send(commetDeleted);
+      });
     } catch (err) {
       console.error(err);
       next(err);
