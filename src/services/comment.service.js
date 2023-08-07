@@ -13,10 +13,11 @@ const commentService = {
 
   findCommentForPostById: async (req, res, next) => {
     const { id, idComment } = req.params;
+
     const comment = await Comment.findAll({
       where: { idPost: id, id: idComment },
     });
-    console.log(comment);
+
     if (comment.length === 0 || comment === null) {
       return res.json({ message: `No comment with this id : ${idComment}` });
     }
@@ -25,15 +26,25 @@ const commentService = {
   },
 
   create: async (req, res, next) => {
-    const { id } = req.params;
-    const model = req.body;
-    const createComment = await Comment.create({
-      username: model.username,
-      date: model.date,
-      content: model.content,
-      idPost: id,
-    });
-    res.status(200).send(createComment);
+    try {
+      const result = await sequelize.transaction(
+        async (t) => {
+          const { id } = req.params;
+          const model = req.body;
+          const createComment = await Comment.create({
+            username: model.username,
+            date: model.date,
+            content: model.content,
+            idPost: id,
+          });
+          res.status(200).send(createComment);
+        },
+        { transaction: t }
+      );
+    } catch (error) {
+      console.error(error);
+      next(error);
+    }
   },
 
   updateCommentForPostById: async (req, res, next) => {
