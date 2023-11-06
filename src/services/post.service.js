@@ -1,5 +1,9 @@
 import sequelize from "../Persistence/database.js";
 import Post from "../database/models/post.js";
+import express from "express";
+const app = express();
+
+app.use(express.json());
 
 const postService = {
   findAll: async (req, res, next) => {
@@ -25,10 +29,24 @@ const postService = {
 
   create: async (req, res, next) => {
     try {
+      const post = await req.body;
+      console.log(post);
       return await sequelize.transaction(async (t) => {
-        const post = await req.body;
-        console.log(post);
-        const createPost = await Post.create({ ...post }, { transaction: t });
+        const createPost = await Post.create(
+          {
+            title: post.title,
+            content: post.content,
+            category: post.category,
+            username: post.author,
+            postdate: post.date,
+            createdAt: post.date,
+            updatedAt: post.date,
+            modifiedBy: post.author,
+          },
+          {
+            transaction: t,
+          }
+        );
         res.status(201).send(createPost);
       });
     } catch (err) {
