@@ -25,26 +25,26 @@ app.get("/auth", isAuthenticated, (req, res) => {
 });
 
 //Comments EndPoints
-app.get("/posts", _postService.findAll);
-app.get("/posts/:id", _postService.findById);
-app.post("/posts", isAuthenticated, _postService.create);
-app.put("/posts/:id", isAuthenticated, _postService.update);
-app.delete("/posts/:id", isAuthenticated, _postService.Delete);
+app.get("/api/v1/posts", _postService.findAll);
+app.get("/api/v1/posts/:id", _postService.findById);
+app.post("/api/v1/posts", _postService.create);
+app.put("/api/v1/posts/:id", isAuthenticated, _postService.update);
+app.delete("/api/v1/posts/:id", isAuthenticated, _postService.Delete);
 
 //Comments EndPoints
-app.get("/posts/:id/comments", _commentService.findAllCommentsByPost);
+app.get("/api/v1/posts/:id/comments", _commentService.findAllCommentsByPost);
 app.get(
-  "/posts/:id/comments/:idComment",
+  "/api/v1/posts/:id/comments/:idComment",
   _commentService.findCommentForPostById
 );
-app.post("/posts/:id/comments", isAuthenticated, _commentService.create);
+app.post("/api/v1/posts/:id/comments", isAuthenticated, _commentService.create);
 app.put(
-  "/posts/:id/comments/:idComment",
+  "/api/v1/posts/:id/comments/:idComment",
   isAuthenticated,
   _commentService.updateCommentForPostById
 );
 app.delete(
-  "/posts/:id/comments/:idComment",
+  "/api/v1/posts/:id/comments/:idComment",
   isAuthenticated,
   _commentService.delete
 );
@@ -53,4 +53,5 @@ app.delete(
 const server = app.listen(port, () =>
   console.log("server running in port:", port)
 );
+
 server.listen;
