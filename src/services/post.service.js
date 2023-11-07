@@ -1,3 +1,4 @@
+import { Op, where } from "sequelize";
 import sequelize from "../Persistence/database.js";
 import Post from "../database/models/post.js";
 import express from "express";
@@ -7,8 +8,26 @@ app.use(express.json());
 
 const postService = {
   findAll: async (req, res, next) => {
-    const posts = await Post.findAll();
-    res.status(200).send(posts);
+    try {
+      const { search } = req.query;
+      console.log(search);
+      if (search) {
+        const posts = await Post.findAll({
+          where: {
+            title: {
+              [Op.like]: `%${search}%`,
+            },
+          },
+        });
+        return res.status(200).json(posts);
+      }
+
+      const posts = await Post.findAll();
+      return res.status(200).json(posts);
+    } catch (err) {
+      console.error(err);
+      next(err);
+    }
   },
 
   findById: async (req, res, next) => {
