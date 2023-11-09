@@ -1,4 +1,4 @@
-import { DataTypes, UUIDV4 } from "sequelize";
+import { DataTypes, UUIDV4, ARRAY } from "sequelize";
 import sequelize from "../../Persistence/database.js";
 
 const Post = sequelize.define(
@@ -27,6 +27,7 @@ const Post = sequelize.define(
       defaultValue: "Software",
       allowNull: false,
     },
+    
     username: {
       type: DataTypes.STRING,
       allowNull: true,
