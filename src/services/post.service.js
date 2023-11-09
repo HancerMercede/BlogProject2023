@@ -2,6 +2,7 @@ import { Op, where } from "sequelize";
 import sequelize from "../Persistence/database.js";
 import Post from "../database/models/post.js";
 import express from "express";
+
 const app = express();
 
 app.use(express.json());
@@ -23,6 +24,7 @@ const postService = {
       }
 
       const posts = await Post.findAll();
+
       return res.status(200).json(posts);
     } catch (err) {
       console.error(err);
@@ -48,6 +50,7 @@ const postService = {
 
   create: async (req, res, next) => {
     try {
+      console.log(req.body);
       const post = await req.body;
       console.log(post);
       return await sequelize.transaction(async (t) => {
@@ -56,6 +59,7 @@ const postService = {
             title: post.title,
             content: post.content,
             category: post.category,
+            cover: post.cover,
             username: post.author,
             postdate: post.date,
             createdAt: post.date,
@@ -66,7 +70,7 @@ const postService = {
             transaction: t,
           }
         );
-        res.status(201).send(createPost);
+        res.status(201).json(createPost);
       });
     } catch (err) {
       console.error(err);
