@@ -2,14 +2,24 @@ import express from "express";
 import { Auth, isAuthenticated } from "./src/auth/auth.js";
 import _postService from "./src/services/post.service.js";
 import _commentService from "./src/services/comment.service.js";
-import multer from "multer";
 import cors from "cors";
+import multer from "multer";
 
-const uploadMiddleware = multer({ dest: "uploads/" });
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const upload = multer({
+  dest: "uploads/",
+  limits: { fileSize: 10 * 1024 * 1024 },
+});
 
 const app = express();
 
 app.use(express.json());
+app.use("/uploads", express.static(__dirname + "/uploads"));
 app.use(cors());
 
 const port = process.env.PORT || 3001;
@@ -30,11 +40,8 @@ app.get("/auth", isAuthenticated, (req, res) => {
 //Comments EndPoints
 app.get("/api/v1/posts", _postService.findAll);
 app.get("/api/v1/posts/:id", _postService.findById);
-app.post(
-  "/api/v1/posts",
-  uploadMiddleware.single("cover"),
-  _postService.create
-);
+
+app.post("/api/v1/posts", upload.single("files"), _postService.create);
 app.put("/api/v1/posts/:id", isAuthenticated, _postService.update);
 app.delete("/api/v1/posts/:id", isAuthenticated, _postService.Delete);
 
@@ -56,6 +63,9 @@ app.delete(
   _commentService.delete
 );
 
+app.post("/api/v1/uploads", upload.single("files"), (req, res, next) => {
+  console.log({ files: req.file });
+});
 //Start the server
 const server = app.listen(port, () =>
   console.log("server running in port:", port)

@@ -1,17 +1,14 @@
-import { Op, where } from "sequelize";
+import { Op } from "sequelize";
 import sequelize from "../Persistence/database.js";
 import Post from "../database/models/post.js";
-import express from "express";
-
-const app = express();
-
-app.use(express.json());
+import fs from "fs";
 
 const postService = {
   findAll: async (req, res, next) => {
     try {
       const { search } = req.query;
       console.log(search);
+
       if (search) {
         const posts = await Post.findAll({
           where: {
@@ -50,16 +47,22 @@ const postService = {
 
   create: async (req, res, next) => {
     try {
-      console.log(req.body);
       const post = await req.body;
+      const { originalname, path } = req.file;
+      const parts = originalname.split(".");
+      const ext = parts[parts.length - 1];
+      const newPath = path + "." + ext;
+      fs.renameSync(path, newPath);
+      console.log(newPath);
+
       console.log(post);
       return await sequelize.transaction(async (t) => {
         const createPost = await Post.create(
           {
             title: post.title,
             content: post.content,
+            cover: newPath,
             category: post.category,
-            cover: post.cover,
             username: post.author,
             postdate: post.date,
             createdAt: post.date,

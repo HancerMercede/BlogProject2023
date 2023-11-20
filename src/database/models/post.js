@@ -1,5 +1,6 @@
 import { DataTypes, UUIDV4, ARRAY } from "sequelize";
 import sequelize from "../../Persistence/database.js";
+import comment from "./comment.js";
 
 const Post = sequelize.define(
   "Post",
@@ -22,12 +23,15 @@ const Post = sequelize.define(
       type: DataTypes.STRING,
       allowNull: true,
     },
+    cover: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
     category: {
       type: DataTypes.STRING,
       defaultValue: "Software",
       allowNull: false,
     },
-    
     username: {
       type: DataTypes.STRING,
       allowNull: true,
@@ -57,13 +61,8 @@ const Post = sequelize.define(
   },
   {
     sequelize,
-    modelName: "User",
+    modelName: "Post",
     timestamps: true,
-  },
-  {
-    fullcontent: async () => {
-      return (await title) + "" + content;
-    },
   }
 );
 
