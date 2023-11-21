@@ -10,8 +10,8 @@ dotenv.config();
 
 app.use(express.json());
 
-const signToken = (id) =>
-  jwt.sign({ id }, process.env.SECRET_KEY, { expiresIn: "1h" });
+const signToken = (user) =>
+  jwt.sign({ user }, process.env.SECRET_KEY, { expiresIn: "1h" });
 
 const validateJWT = expressjwt({
   secret: process.env.SECRET_KEY,
@@ -51,13 +51,13 @@ const Auth = {
       const salt = await bcrypt.genSalt();
       const hashed = await bcrypt.hash(body.password, salt);
       const user = await User.create({
-        email: body.username.toLowercase(),
+        email: body.username,
         password: hashed,
         salt,
         name: body.firstname + " " + body.lastname,
         role: "user", // body.role,
       });
-      const signed = signToken(user.id);
+      const signed = signToken({ id: user.id, email: user.email });
       res.status(201).json(signed);
     } catch (err) {
       console.error(err.message);
@@ -68,7 +68,7 @@ const Auth = {
   login: async (req, res) => {
     const { body } = req;
     try {
-      const user = await User.findOne({ email: body.email });
+      const user = await User.findOne({ email: body.username });
 
       if (!user) {
         res.status(403).send("wrong user or password, please verify.");
@@ -76,7 +76,7 @@ const Auth = {
         const isMatch = await bcrypt.compareSync(body.password, user.password);
 
         if (isMatch) {
-          const signed = signToken(user.id);
+          const signed = signToken({ id: user.id, email: user.email });
           res.status(200).cookie("token", signed).json(signed);
         } else {
           res.status(403).send("Invalid passeword, please verify.");
@@ -89,7 +89,11 @@ const Auth = {
   },
   profile: async (req, res) => {
     const { token } = req.cookies;
-    res.json(token);
+    jwt.verify(token, process.env.SECRET_KEY, {}, (err, info) => {
+      if (err) throw err;
+
+      res.json(info);
+    });
   },
 };
 
