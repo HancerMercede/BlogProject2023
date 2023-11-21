@@ -40,9 +40,9 @@ const isAuthenticated = express.Router().use(validateJWT, findAndAssignUser);
 const Auth = {
   register: async (req, res) => {
     const { body } = req;
-    console.log(body);
+
     try {
-      const userExist = await User.findOne({ where: { email: body.email } });
+      const userExist = await User.findOne({ where: { email: body.username } });
 
       if (userExist) {
         return res.status(403).send("The user exist in the db.");
@@ -51,14 +51,14 @@ const Auth = {
       const salt = await bcrypt.genSalt();
       const hashed = await bcrypt.hash(body.password, salt);
       const user = await User.create({
-        email: body.email,
+        email: body.username.toLowercase(),
         password: hashed,
         salt,
-        name: body.name,
-        role: body.role,
+        name: body.firstname + " " + body.lastname,
+        role: "user", // body.role,
       });
       const signed = signToken(user.id);
-      res.status(201).send(signed);
+      res.status(201).json(signed);
     } catch (err) {
       console.error(err.message);
       res.status(500).send(err.message);
@@ -73,11 +73,11 @@ const Auth = {
       if (!user) {
         res.status(403).send("wrong user or password, please verify.");
       } else {
-        const isMatch = await bcrypt.compare(body.password, user.password);
+        const isMatch = await bcrypt.compareSync(body.password, user.password);
 
         if (isMatch) {
           const signed = signToken(user.id);
-          res.status(200).send(signed);
+          res.status(200).cookie("token", signed).json(signed);
         } else {
           res.status(403).send("Invalid passeword, please verify.");
         }
@@ -86,6 +86,10 @@ const Auth = {
       console.error(err);
       res.status(500).send(err.message);
     }
+  },
+  profile: async (req, res) => {
+    const { token } = req.cookies;
+    res.json(token);
   },
 };
 

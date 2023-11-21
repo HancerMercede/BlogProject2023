@@ -4,7 +4,7 @@ import _postService from "./src/services/post.service.js";
 import _commentService from "./src/services/comment.service.js";
 import cors from "cors";
 import multer from "multer";
-
+import cookieParser from "cookie-parser";
 import path from "path";
 import { fileURLToPath } from "url";
 
@@ -20,7 +20,14 @@ const app = express();
 
 app.use(express.json());
 app.use("/uploads", express.static(__dirname + "/uploads"));
-app.use(cors());
+app.use(
+  cors({
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    origin: "http://localhost:5173",
+  })
+);
+app.use(cookieParser());
 
 const port = process.env.PORT || 3001;
 
@@ -32,6 +39,7 @@ app.get("/", (req, res, next) => {
 //Auth EndPoints
 app.post("/auth/register", Auth.register);
 app.post("/auth/login", Auth.login);
+app.get("/auth/profile", Auth.profile);
 
 app.get("/auth", isAuthenticated, (req, res) => {
   res.send(req.user);

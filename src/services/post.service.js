@@ -7,8 +7,6 @@ const postService = {
   findAll: async (req, res, next) => {
     try {
       const { search } = req.query;
-      console.log(search);
-
       if (search) {
         const posts = await Post.findAll({
           where: {
