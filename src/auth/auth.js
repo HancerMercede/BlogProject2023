@@ -11,7 +11,7 @@ dotenv.config();
 app.use(express.json());
 
 const signToken = (user) =>
-  jwt.sign({ user }, process.env.SECRET_KEY, { expiresIn: "1h" });
+  jwt.sign({ user }, process.env.SECRET_KEY, { expiresIn: "20m" });
 
 const validateJWT = expressjwt({
   secret: process.env.SECRET_KEY,
@@ -21,7 +21,7 @@ const validateJWT = expressjwt({
 // Middleware to find and assign the user to the request.
 const findAndAssignUser = async (req, res, next) => {
   try {
-    const user = await User.findByPk(req.auth.id);
+    const user = await User.findByPk(req.auth.user.id);
 
     if (!user) {
       return res.status(404).end();
@@ -67,6 +67,7 @@ const Auth = {
 
   login: async (req, res) => {
     const { body } = req;
+
     try {
       const user = await User.findOne({ email: body.username });
 
@@ -77,7 +78,10 @@ const Auth = {
 
         if (isMatch) {
           const signed = signToken({ id: user.id, email: user.email });
-          res.status(200).cookie("token", signed).json(signed);
+          res
+            .status(200)
+            .cookie("token", signed)
+            .json({ id: user.id, email: user.email, token: signed });
         } else {
           res.status(403).send("Invalid passeword, please verify.");
         }
@@ -87,14 +91,24 @@ const Auth = {
       res.status(500).send(err.message);
     }
   },
-  profile: async (req, res) => {
+  profile: (req, res) => {
     const { token } = req.cookies;
+
+    if (!token) return res.status(204);
+
     jwt.verify(token, process.env.SECRET_KEY, {}, (err, info) => {
-      if (err) throw err;
+      if (err) {
+        return res.status(500).json({ message: "TOKEN FAILED" });
+      }
 
       res.json(info);
     });
   },
-};
+  logout: (req, res) => {
+    const newToken = signToken({ id: "", email: "" });
 
+    console.log(newToken);
+    res.status(204).cookie("newToken", newToken).json(newToken);
+  },
+};
 export { Auth, isAuthenticated };

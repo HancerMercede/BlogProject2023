@@ -39,6 +39,7 @@ app.get("/", (req, res, next) => {
 //Auth EndPoints
 app.post("/auth/register", Auth.register);
 app.post("/auth/login", Auth.login);
+app.post("/auth/logout", Auth.logout);
 app.get("/auth/profile", Auth.profile);
 
 app.get("/auth", isAuthenticated, (req, res) => {
@@ -49,8 +50,18 @@ app.get("/auth", isAuthenticated, (req, res) => {
 app.get("/api/v1/posts", _postService.findAll);
 app.get("/api/v1/posts/:id", _postService.findById);
 
-app.post("/api/v1/posts", upload.single("files"), _postService.create);
-app.put("/api/v1/posts/:id", isAuthenticated, _postService.update);
+app.post(
+  "/api/v1/posts",
+  upload.single("files"),
+  isAuthenticated,
+  _postService.create
+);
+app.put(
+  "/api/v1/posts/:id",
+  upload.single("files"),
+  isAuthenticated,
+  _postService.update
+);
 app.delete("/api/v1/posts/:id", isAuthenticated, _postService.Delete);
 
 //Comments EndPoints

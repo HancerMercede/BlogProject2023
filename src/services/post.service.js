@@ -85,8 +85,16 @@ const postService = {
         const { id } = req.params;
 
         const post = req.body;
+
         const updatePost = await Post.update(
-          post,
+          {
+            title: post.title,
+            body: post.body,
+            category: post.category,
+            username: post.author,
+            createdAt: post.date,
+            modifiedBy: post.author,
+          },
           { where: { id: id } },
           { transaction: t }
         );
