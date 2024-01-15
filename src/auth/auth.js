@@ -77,11 +77,17 @@ const Auth = {
         const isMatch = await bcrypt.compareSync(body.password, user.password);
 
         if (isMatch) {
-          const signed = signToken({ id: user.id, email: user.email });
-          res
-            .status(200)
-            .cookie("token", signed)
-            .json({ id: user.id, email: user.email, token: signed });
+          const signed = signToken({
+            id: user.id,
+            email: user.email,
+            name: user.name,
+          });
+          res.status(200).cookie("token", signed).json({
+            id: user.id,
+            email: user.email,
+            name: user.name,
+            token: signed,
+          });
         } else {
           res.status(403).send("Invalid passeword, please verify.");
         }
@@ -98,17 +104,19 @@ const Auth = {
 
     jwt.verify(token, process.env.SECRET_KEY, {}, (err, info) => {
       if (err) {
-        return res.status(500).json({ message: "TOKEN FAILED" });
+        return res.status(403).json({ message: "TOKEN FAILED" });
       }
 
       res.json(info);
     });
   },
-  logout: (req, res) => {
-    const newToken = signToken({ id: "", email: "" });
 
-    console.log(newToken);
-    res.status(204).cookie("newToken", newToken).json(newToken);
+  logout: (req, res) => {
+    const token = "";
+    res
+      .status(200)
+      .clearCookie("token")
+      .json({ id: "", email: "", token: token });
   },
 };
 export { Auth, isAuthenticated };

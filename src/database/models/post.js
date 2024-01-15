@@ -5,7 +5,6 @@ import comment from "./comment.js";
 const Post = sequelize.define(
   "Post",
   {
-    // Model attributes are defined here
     id: {
       type: DataTypes.STRING,
       defaultValue: UUIDV4,

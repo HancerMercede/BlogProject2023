@@ -1,4 +1,5 @@
 import Comment from "../database/models/comment.js";
+import sequelize from "../Persistence/database.js";
 
 const commentService = {
   findAllCommentsByPost: async (req, res, next) => {
@@ -6,9 +7,9 @@ const commentService = {
     const comments = await Comment.findAll({ where: { idPost: id } });
 
     if (comments.length === 0 || comments === null) {
-      return res.json({ message: `No comments yet for this post: ${id}` });
+      return res.status(404).send([]);
     }
-    res.status(200).send(comments);
+    res.status(200).json(comments);
   },
 
   findCommentForPostById: async (req, res, next) => {
@@ -19,7 +20,9 @@ const commentService = {
     });
 
     if (comment.length === 0 || comment === null) {
-      return res.json({ message: `No comment with this id : ${idComment}` });
+      return res.json({
+        message: `No comment with this id : ${idComment}`,
+      });
     }
 
     res.status(200).json(comment);
@@ -30,8 +33,13 @@ const commentService = {
       return await sequelize.transaction(async (t) => {
         const { id } = await req.params;
         const model = req.body;
+        console.log(model);
         const createComment = await Comment.create(
-          { ...model },
+          {
+            idPost: model.idPost,
+            content: model.content,
+            username: model.username,
+          },
           { transaction: t }
         );
         res.status(200).send(createComment);

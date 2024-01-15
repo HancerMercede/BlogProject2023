@@ -6,6 +6,7 @@ const Comment = sequelize.define(
   {
     id: {
       type: DataTypes.STRING,
+      defaultValue: UUIDV4,
       primaryKey: true,
       defaultValue: UUIDV4,
       allowNull: false,
@@ -15,10 +16,8 @@ const Comment = sequelize.define(
     },
     idPost: {
       type: DataTypes.STRING,
+      defaultValue: UUIDV4,
       allowNull: false,
-      validate: {
-        isUUID: 4,
-      },
     },
     content: {
       type: DataTypes.STRING,
@@ -34,14 +33,17 @@ const Comment = sequelize.define(
     commentDate: {
       type: DataTypes.DATE,
       allowNull: false,
+      defaultValue: DataTypes.NOW,
     },
     createdAt: {
       type: DataTypes.DATE,
       allowNull: false,
+      defaultValue: DataTypes.NOW,
     },
     updatedAt: {
       type: DataTypes.DATE,
       allowNull: false,
+      defaultValue: DataTypes.NOW,
     },
   },
   {

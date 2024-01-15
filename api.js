@@ -33,7 +33,7 @@ const port = process.env.PORT || 3001;
 
 // root endpoints
 app.get("/", (req, res, next) => {
-  res.send("Hello, this is the API for the it-master-blog application.");
+  res.sendFile("public/index.html", { root: __dirname });
 });
 
 //Auth EndPoints

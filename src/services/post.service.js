@@ -89,7 +89,7 @@ const postService = {
         const updatePost = await Post.update(
           {
             title: post.title,
-            body: post.body,
+            content: post.content,
             category: post.category,
             username: post.author,
             createdAt: post.date,
