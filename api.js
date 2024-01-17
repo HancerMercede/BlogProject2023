@@ -43,7 +43,7 @@ app.post("/auth/logout", Auth.logout);
 app.get("/auth/profile", Auth.profile);
 
 app.get("/auth", isAuthenticated, (req, res) => {
-  res.send(req.user);
+  res.send({ id: req.user.id });
 });
 
 //Comments EndPoints

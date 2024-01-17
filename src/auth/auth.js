@@ -55,7 +55,7 @@ const Auth = {
         password: hashed,
         salt,
         name: body.firstname + " " + body.lastname,
-        role: "user", // body.role,
+        role: "user",
       });
       const signed = signToken({ id: user.id, email: user.email });
       res.status(201).json(signed);

@@ -31,9 +31,8 @@ const commentService = {
   create: async (req, res, next) => {
     try {
       return await sequelize.transaction(async (t) => {
-        const { id } = await req.params;
         const model = req.body;
-        console.log(model);
+
         const createComment = await Comment.create(
           {
             idPost: model.idPost,
