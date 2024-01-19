@@ -7,6 +7,9 @@ import multer from "multer";
 import cookieParser from "cookie-parser";
 import path from "path";
 import { fileURLToPath } from "url";
+import morgan from "morgan";
+import swaggerJSDoc from "swagger-jsdoc";
+import swaggerUI from "swagger-ui-express";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -16,9 +19,28 @@ const upload = multer({
   limits: { fileSize: 10 * 1024 * 1024 },
 });
 
+const options = {
+  definition: {
+    openapi: "3.0.3",
+    info: {
+      title: "Tech-Masters API",
+      version: "1.0.0",
+      description:
+        "This is the API documentation, for the tech-masters blog application.",
+    },
+    servers: [{ url: "http/localhost:3000" }],
+  },
+  apis: ["./*.js"],
+};
+
+const specs = swaggerJSDoc(options);
+
 const app = express();
 
+app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs));
+
 app.use(express.json());
+app.use(morgan("dev"));
 app.use("/uploads", express.static(__dirname + "/uploads"));
 app.use(
   cors({
@@ -37,16 +59,16 @@ app.get("/", (req, res, next) => {
 });
 
 //Auth EndPoints
+
+app.get("/auth", isAuthenticated, (req, res) => {
+  res.send({ id: req.user.id });
+});
 app.post("/auth/register", Auth.register);
 app.post("/auth/login", Auth.login);
 app.post("/auth/logout", Auth.logout);
 app.get("/auth/profile", Auth.profile);
 
-app.get("/auth", isAuthenticated, (req, res) => {
-  res.send({ id: req.user.id });
-});
-
-//Comments EndPoints
+//Posts EndPoints
 app.get("/api/v1/posts", _postService.findAll);
 app.get("/api/v1/posts/:id", _postService.findById);
 
@@ -82,9 +104,9 @@ app.delete(
   _commentService.delete
 );
 
-app.post("/api/v1/uploads", upload.single("files"), (req, res, next) => {
-  console.log({ files: req.file });
-});
+// app.post("/api/v1/uploads", upload.single("files"), (req, res, next) => {
+//   console.log({ files: req.file });
+// });
 //Start the server
 const server = app.listen(port, () =>
   console.log("server running in port:", port)

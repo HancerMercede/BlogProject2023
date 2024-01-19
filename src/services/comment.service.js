@@ -32,7 +32,6 @@ const commentService = {
     try {
       return await sequelize.transaction(async (t) => {
         const model = req.body;
-
         const createComment = await Comment.create(
           {
             idPost: model.idPost,
