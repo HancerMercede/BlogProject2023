@@ -8,8 +8,6 @@ import cookieParser from "cookie-parser";
 import path from "path";
 import { fileURLToPath } from "url";
 import morgan from "morgan";
-import swaggerJSDoc from "swagger-jsdoc";
-import swaggerUI from "swagger-ui-express";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -19,26 +17,9 @@ const upload = multer({
   limits: { fileSize: 10 * 1024 * 1024 },
 });
 
-const options = {
-  definition: {
-    openapi: "3.0.3",
-    info: {
-      title: "Tech-Masters API",
-      version: "1.0.0",
-      description:
-        "This is the API documentation, for the tech-masters blog application.",
-    },
-    servers: [{ url: "http/localhost:3000" }],
-  },
-  apis: ["./*.js"],
-};
-
-const specs = swaggerJSDoc(options);
-
 const app = express();
 
-app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs));
-
+app.use(express.static(__dirname + "/public"));
 app.use(express.json());
 app.use(morgan("dev"));
 app.use("/uploads", express.static(__dirname + "/uploads"));
@@ -51,15 +32,15 @@ app.use(
 );
 app.use(cookieParser());
 
+// eslint-disable-next-line no-undef
 const port = process.env.PORT || 3001;
 
 // root endpoints
-app.get("/", (req, res, next) => {
+app.get("/", (req, res) => {
   res.sendFile("public/index.html", { root: __dirname });
 });
 
 //Auth EndPoints
-
 app.get("/auth", isAuthenticated, (req, res) => {
   res.send({ id: req.user.id });
 });

@@ -1,6 +1,5 @@
 import { DataTypes, UUIDV4 } from "sequelize";
 import sequelize from "../../Persistence/database.js";
-import Post from "./post.js";
 
 const User = sequelize.define(
   "User",

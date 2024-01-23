@@ -6,11 +6,20 @@
 
 body {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     background-color: #eee;
+    margin: 25px;
+    align-items: center;
 }
 
 .Title {
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-    color: aquamarine
+    color: rgb(29, 52, 158);
+    margin: 5px 0;
+}
+
+.content {
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    text-align: center;
 }

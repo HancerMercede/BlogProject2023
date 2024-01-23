@@ -8,7 +8,6 @@ const Comment = sequelize.define(
       type: DataTypes.STRING,
       defaultValue: UUIDV4,
       primaryKey: true,
-      defaultValue: UUIDV4,
       allowNull: false,
       validate: {
         isUUID: 4,

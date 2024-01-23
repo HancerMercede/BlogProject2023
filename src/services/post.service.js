@@ -7,6 +7,7 @@ const postService = {
   findAll: async (req, res, next) => {
     try {
       const { search } = req.query;
+
       if (search) {
         const posts = await Post.findAll({
           where: {
@@ -45,16 +46,17 @@ const postService = {
 
   create: async (req, res, next) => {
     try {
-      const post = await req.body;
       const { originalname, path } = req.file;
       const parts = originalname.split(".");
       const ext = parts[parts.length - 1];
       const newPath = path + "." + ext;
       fs.renameSync(path, newPath);
+
       console.log(newPath);
 
-      console.log(post);
       return await sequelize.transaction(async (t) => {
+        const post = req.body;
+        console.log(post);
         const createPost = await Post.create(
           {
             title: post.title,
@@ -74,8 +76,8 @@ const postService = {
         res.status(201).json(createPost);
       });
     } catch (err) {
-      console.error(err);
-      next(err);
+      console.error(err.message);
+      next(err.message);
     }
   },
 

@@ -1,6 +1,5 @@
-import { DataTypes, UUIDV4, ARRAY } from "sequelize";
+import { DataTypes, UUIDV4 } from "sequelize";
 import sequelize from "../../Persistence/database.js";
-import comment from "./comment.js";
 
 const Post = sequelize.define(
   "Post",
